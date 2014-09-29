@@ -10,6 +10,7 @@ import logging.config
 import yaml
 import sys
 import os
+import subprocess
 
 logger = logging.getLogger("system")
 
@@ -26,16 +27,12 @@ class LogServer(gevent.server.DatagramServer):
         logger.info(data)
 
 
-def upload(filename, bucket):
-    for i in os.listdir('.'):
-         if filename +'.' in i and '.gz' not in i:
-            ipath = i
-            os.system('gzip %s' % ipath)
-            os.system('gsutil cp %s.gz gs://%s' % (ipath, bucket))
+def upload(filename, bucket, callback):
+    while True:
+        subprocess.Popen(["python", callback, filename, bucket])
+        gevent.sleep(5)
 
-    time.sleep(5*60)
-
-def start(bucket, type="TCP", port=8080, filename="request.log", when="H"):
+def start(bucket, type="TCP", port=8080, filename="request.log", when="H", callback="upload.py"):
     config = yaml.load(open('conf.yaml', 'r').read().format(**{
         "filename": filename,
         "when": when
@@ -43,7 +40,7 @@ def start(bucket, type="TCP", port=8080, filename="request.log", when="H"):
     logging.config.dictConfig(config)
 
     print('Serving %s on %s...' % (type, port ))
-    gevent.spawn(upload, filename, bucket)
+    gevent.spawn(upload, filename, bucket, callback)
 
     if type == "TCP":
         WSGIServer(('', port), application).serve_forever()
@@ -52,6 +49,6 @@ def start(bucket, type="TCP", port=8080, filename="request.log", when="H"):
 
 
 if __name__ == '__main__':
-#    import clime; clime.start()
-    start('tagtoo_rtb_log', type="UDP")
+   import clime; clime.start()
+    # start('tagtoo_rtb_log', type="UDP")
 
