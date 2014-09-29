@@ -11,7 +11,7 @@ import yaml
 import sys
 import os
 
-logger = logging.getLogger("root")
+logger = logging.getLogger("system")
 
 def application(env, start_response):
     path = env['PATH_INFO']
@@ -28,7 +28,7 @@ class LogServer(gevent.server.DatagramServer):
 
 def upload(filename, bucket):
     for i in os.listdir('.'):
-         if filename in i and '.gz' not in i:
+         if filename +'.' in i and '.gz' not in i:
             ipath = i
             os.system('gzip %s' % ipath)
             os.system('gsutil cp %s.gz gs://%s' % (ipath, bucket))
@@ -42,15 +42,16 @@ def start(bucket, type="TCP", port=8080, filename="request.log", when="H"):
     }))
     logging.config.dictConfig(config)
 
+    print('Serving %s on %s...' % (type, port ))
+    gevent.spawn(upload, filename, bucket)
+
     if type == "TCP":
         WSGIServer(('', port), application).serve_forever()
     else:
         LogServer(":%s" % port).serve_forever()
 
-    print('Serving on %s...' % port)
-
-    gevent.spawn(upload, filename, bucket)
 
 if __name__ == '__main__':
-    import clime; clime.start()
+#    import clime; clime.start()
+    start('tagtoo_rtb_log', type="UDP")
 
