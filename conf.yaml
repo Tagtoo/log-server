@@ -1,0 +1,20 @@
+version: 1
+disable_existing_loggers: True
+
+loggers:
+    system:
+        level: INFO
+        handlers: [request]
+
+handlers:
+    request:
+        class: logging.handlers.TimedRotatingFileHandler
+        filename: "{filename}"
+        utc: True
+        formatter: time
+        when: "{when}"
+
+formatters:
+    time:
+        format: '#!#%(asctime)s %(message)s'
+
