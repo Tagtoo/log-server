@@ -63,5 +63,6 @@ def start(filename, bucket):
             os.system('gsutil mv %s gs://%s' % (opath, bucket))
             os.remove(opath)
 
+import re
 if __name__ == "__main__":
-    import clime; clime.start(white_pattern=start)
+    import clime; clime.start(default="start")

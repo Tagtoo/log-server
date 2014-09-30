@@ -30,7 +30,7 @@ class LogServer(gevent.server.DatagramServer):
 def upload(filename, bucket, callback):
     while True:
         subprocess.Popen(["python", callback, filename, bucket])
-        gevent.sleep(5)
+        gevent.sleep(60*60)
 
 def start(bucket, type="TCP", port=8080, filename="request.log", when="H", callback="upload.py"):
     config = yaml.load(open('conf.yaml', 'r').read().format(**{
