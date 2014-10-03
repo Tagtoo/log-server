@@ -7,6 +7,7 @@ import json
 import gzip
 import os
 import time
+from  gcloud import storage
 
 pattern = re.compile(r'([\d]{4}\-[\d]{2}\-[\d]{2} [\d]{2}:[\d]{2}:[\d]{2},[\d]{3}) REQ:(.*)RESP:(.*)', re.DOTALL)
 
@@ -53,6 +54,16 @@ def convert(filename, ofile):
         except:
             print line
 
+def upload(filename, bucket):
+    client = storage.get_bucket(
+        bucket,
+        "tagtooadex2",
+        "1065106153444-mdj042q86ciof489e71i49joe6an21k6@developer.gserviceaccount.com",
+        "tagtooadex2-9e2928ac0acf.p12"
+    )
+    client.upload_file(filename, filename)
+    os.remove(filename)
+
 def start(filename, bucket):
     for i in os.listdir('.'):
         if '%s.'%filename in i and '.gz' not in i:
@@ -60,8 +71,7 @@ def start(filename, bucket):
             opath = './%s.gz' % i.replace('request.log.', 'request.json.')
             convert(ipath, opath)
             os.remove(ipath)
-            os.system('gsutil mv %s gs://%s' % (opath, bucket))
-            os.remove(opath)
+            upload(opath, bucket)
 
 import re
 if __name__ == "__main__":
