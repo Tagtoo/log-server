@@ -1,3 +1,4 @@
 gevent
 pyyaml
 clime
+gcloud
