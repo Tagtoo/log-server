@@ -67,11 +67,16 @@ def upload(filename, bucket):
 def start(filename, bucket):
     for i in os.listdir('.'):
         if '%s.'%filename in i and '.gz' not in i:
-            ipath = './%s' % i
-            opath = './%s.gz' % i.replace('request.log.', 'request.json.')
-            convert(ipath, opath)
-            os.remove(ipath)
-            upload(opath, bucket)
+            try:
+                ipath = './%s' % i
+                opath = './%s.gz' % i.replace('request.log.', 'request.json.')
+                convert(ipath, opath)
+                os.remove(ipath)
+                upload(opath, bucket)
+            except:
+                raise
+                pass
+
 
 import re
 if __name__ == "__main__":

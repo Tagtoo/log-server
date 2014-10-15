@@ -39,8 +39,8 @@ def start(bucket, type="TCP", port=8080, filename="request.log", when="H", callb
     }))
     logging.config.dictConfig(config)
 
-    print('Serving %s on %s...' % (type, port ))
-    gevent.spawn(upload, filename, bucket, callback)
+#    print('Serving %s on %s...' % (type, port ))
+#    gevent.spawn(upload, filename, bucket, callback)
 
     if type == "TCP":
         WSGIServer(('', port), application).serve_forever()
