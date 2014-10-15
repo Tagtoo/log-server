@@ -27,20 +27,12 @@ class LogServer(gevent.server.DatagramServer):
         logger.info(data)
 
 
-def upload(filename, bucket, callback):
-    while True:
-        subprocess.Popen(["python", callback, filename, bucket])
-        gevent.sleep(60*60)
-
-def start(bucket, type="TCP", port=8080, filename="request.log", when="H", callback="upload.py"):
+def start(bucket, type="TCP", port=8080, filename="request.log", when="H"):
     config = yaml.load(open('conf.yaml', 'r').read().format(**{
         "filename": filename,
         "when": when
     }))
     logging.config.dictConfig(config)
-
-#    print('Serving %s on %s...' % (type, port ))
-#    gevent.spawn(upload, filename, bucket, callback)
 
     if type == "TCP":
         WSGIServer(('', port), application).serve_forever()

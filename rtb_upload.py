@@ -7,6 +7,7 @@ import json
 import gzip
 import os
 import time
+import logging
 from  gcloud import storage
 
 pattern = re.compile(r'([\d]{4}\-[\d]{2}\-[\d]{2} [\d]{2}:[\d]{2}:[\d]{2},[\d]{3}) REQ:(.*)RESP:(.*)', re.DOTALL)
@@ -64,18 +65,22 @@ def upload(filename, bucket):
     client.upload_file(filename, filename)
     os.remove(filename)
 
-def start(filename, bucket):
-    for i in os.listdir('.'):
-        if '%s.'%filename in i and '.gz' not in i:
-            try:
-                ipath = './%s' % i
-                opath = './%s.gz' % i.replace('request.log.', 'request.json.')
-                convert(ipath, opath)
-                os.remove(ipath)
-                upload(opath, bucket)
-            except:
-                raise
-                pass
+def start():
+    filename = "request.log"
+    bucket = "tagtoo_rtb_log"
+    while True:
+        for i in os.listdir('.'):
+            if '%s.'%filename in i and '.gz' not in i:
+                try:
+                    ipath = './%s' % i
+                    opath = './%s.gz' % i.replace('request.log.', 'request.json.')
+                    convert(ipath, opath)
+                    os.remove(ipath)
+                    upload(opath, bucket)
+                except Exception, e:
+                    logging.exception(e)
+
+        time.sleep(60*60)
 
 
 import re
