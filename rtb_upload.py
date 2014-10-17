@@ -63,19 +63,21 @@ def upload(filename, bucket):
         "tagtooadex2-9e2928ac0acf.p12"
     )
     client.upload_file(filename, filename)
+    print 'try to remove', filename
     os.remove(filename)
 
 def start():
     filename = "request.log"
     bucket = "tagtoo_rtb_log"
     while True:
-        for i in os.listdir('.'):
+        for i in sorted(os.listdir('.')):
             if '%s.'%filename in i and '.gz' not in i:
                 try:
                     ipath = './%s' % i
                     opath = './%s.gz' % i.replace('request.log.', 'request.json.')
                     convert(ipath, opath)
                     os.remove(ipath)
+                    print 'try to remove', ipath
                     upload(opath, bucket)
                 except Exception, e:
                     logging.exception(e)

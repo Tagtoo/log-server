@@ -27,7 +27,7 @@ class LogServer(gevent.server.DatagramServer):
         logger.info(data)
 
 
-def start(bucket, type="TCP", port=8080, filename="request.log", when="H"):
+def start(type="TCP", port=8080, filename="request.log", when="H"):
     config = yaml.load(open('conf.yaml', 'r').read().format(**{
         "filename": filename,
         "when": when
