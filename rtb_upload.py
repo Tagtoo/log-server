@@ -52,7 +52,7 @@ def convert(filename, ofile):
                 ofile.write(json.dumps(req) + '\n')
                 ofile.write(json.dumps(resp) + '\n')
         except:
-            print line
+            pass
 
 
 
