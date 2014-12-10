@@ -8,7 +8,7 @@
 
 bucket=tagtoo_rtb_log
 
-for file in `ls request.log*|grep -v '.gz'`
+for file in `ls request.log.*|grep -v '.gz'`
 do
     i_file=$file
     o_file=`echo ${file}.gz|sed 's/request.log/request.json/'`
